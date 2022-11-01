@@ -9,7 +9,8 @@ namespace TinyBlazorAdmin.Data
     /// </summary>
     public class AzFuncAuthorizationMessageHandler : AuthorizationMessageHandler
     {
-        public string Endpoint { get; set; }
+        public string EndpointApplicationIdUri { get; set; }
+        public string EndpointBaseAddressUrl { get; set; }
 
         /// <summary>
         /// Creates a new instance of the <see cref="AzFuncAuthorizationMessageHandler"/>
@@ -24,10 +25,11 @@ namespace TinyBlazorAdmin.Data
             NavigationManager navigation) : base(provider, navigation)
         {
             var section = config.GetSection(nameof(UrlShortenerSecuredService));
-            Endpoint = section.GetValue<string>(nameof(Endpoint));
+            EndpointApplicationIdUri = section.GetValue<string>(nameof(EndpointApplicationIdUri));
+            EndpointBaseAddressUrl = section.GetValue<string>(nameof(EndpointBaseAddressUrl));
             ConfigureHandler(
-                new[] { Endpoint },
-                new[] { string.Concat(Endpoint, "user_impersonation") }
+                new[] { string.Concat(EndpointApplicationIdUri, "user_impersonation") },
+                new[] { EndpointBaseAddressUrl }
             );
         }
     }

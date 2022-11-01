@@ -17,10 +17,16 @@ namespace TinyBlazorAdmin
             builder.RootComponents.Add<App>("app");
 
             // set up a delegate to get function token
-            static string functionEndpoint(WebAssemblyHostBuilder builder) =>
+            static string functionEndpointApplicationId(WebAssemblyHostBuilder builder) =>
                 builder.Configuration
                     .GetSection(nameof(UrlShortenerSecuredService))
-                    .GetValue<string>(nameof(AzFuncAuthorizationMessageHandler.Endpoint));
+                    .GetValue<string>(nameof(AzFuncAuthorizationMessageHandler.EndpointApplicationIdUri));
+            
+            // set up a delegate to get function endpoint
+            static string functionEndpointBaseAddress(WebAssemblyHostBuilder builder) =>
+                builder.Configuration
+                    .GetSection(nameof(UrlShortenerSecuredService))
+                    .GetValue<string>(nameof(AzFuncAuthorizationMessageHandler.EndpointBaseAddressUrl));
 
             // sets up AAD + user_impersonation to access functions.
             builder.Services.AddMsalAuthentication(options =>
@@ -28,7 +34,7 @@ namespace TinyBlazorAdmin
                 options.ProviderOptions
                 .DefaultAccessTokenScopes.Add("user.read");
                 options.ProviderOptions
-                .AdditionalScopesToConsent.Add($"{functionEndpoint(builder)}user_impersonation");
+                .AdditionalScopesToConsent.Add($"{functionEndpointApplicationId(builder)}user_impersonation");
                 builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
             });
 
@@ -41,7 +47,7 @@ namespace TinyBlazorAdmin
             builder.Services.AddHttpClient(nameof(UrlShortenerSecuredService),
                 client =>
                 {
-                    client.BaseAddress = new Uri(functionEndpoint(builder));
+                    client.BaseAddress = new Uri(functionEndpointBaseAddress(builder));
                 }).AddHttpMessageHandler<AzFuncAuthorizationMessageHandler>();
 
             builder.Services.AddTransient<UrlShortenerSecuredService>();

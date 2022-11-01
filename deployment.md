@@ -116,7 +116,8 @@ Now in your GitHub it's time to update the settings. The code needs to know the 
     "ValidateAuthority": true
   },
   "UrlShortenerSecuredService": {
-    "Endpoint": "https://__azFunction_URL__.azurewebsites.net/"
+    "EndpointApplicationIdUri": "api://__azFunction_ApplicationId__/",
+    "EndpointBaseAddressUrl": "https://__azFunction__.azurewebsites.net/"
   }
 }
 ```
